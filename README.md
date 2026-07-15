@@ -11,6 +11,16 @@ AI GRID is a responsive news-intelligence dashboard for tracking releases, resea
 
 It uses public Google News RSS results, does not scrape full articles, and runs entirely with the Python standard library. A Gemini-powered Markdown briefing workflow is also available as an optional CLI feature.
 
+![AI GRID project flow](assets/ai-grid-project-flow.png)
+
+## Project Highlights
+
+- **UI design direction:** The dashboard was built using the [BMW M `DESIGN.md` analysis from GetDesign.md](https://getdesign.md/bmw-m) as its visual reference. The near-black canvas, precise typography, square components, engineering-grid details, and restrained light-blue/dark-blue/red accents were adapted for an AI news product.
+- **News source:** Current stories are discovered through public [Google News](https://news.google.com/) RSS search feeds. AI GRID parses RSS metadata and sends readers to the original publisher for the full story.
+- **Implementation:** Python 3.8+, the Python standard library, and vanilla HTML, CSS, and JavaScript—without third-party runtime packages.
+
+The BMW M design reference is an independent design-system analysis published by GetDesign.md and maintained by the VoltAgent team. AI GRID is an independent project and is not affiliated with, endorsed by, or sponsored by BMW, GetDesign.md, VoltAgent, Google, or the publishers shown in the feed. BMW and Google are trademarks of their respective owners.
+
 ## Features
 
 - Live, UI-based AI news dashboard
@@ -60,7 +70,7 @@ python3 web_app.py --host 0.0.0.0 --port 8000
 
 ## How News Is Fetched
 
-The browser requests `GET /api/news` from the local Python server. The server then:
+Google News RSS is the discovery and aggregation layer; it is not treated as the original publisher of every story. The browser requests `GET /api/news` from the local Python server. The server then:
 
 1. Builds Google News RSS search URLs for leading AI platforms and industry topics.
 2. Downloads the public RSS/XML feeds using `urllib.request`.
@@ -77,6 +87,22 @@ https://news.google.com/rss/search?q=<search-query>&hl=en-IN&gl=IN&ceid=IN:en
 ```
 
 AI GRID links readers to the original result for full context. It does not scrape or republish full news articles.
+
+### Project Flow
+
+```text
+Google News RSS
+       ↓
+Python collector and XML parser
+       ↓
+Age filtering, sorting, and headline deduplication
+       ↓
+Local JSON endpoint: /api/news
+       ↓
+Responsive HTML/CSS/JavaScript dashboard
+
+Optional: selected RSS metadata → Gemini → Markdown briefing
+```
 
 ## Coverage
 
@@ -213,9 +239,15 @@ Python 3.9+ supports IANA timezone names through `zoneinfo`. The Python 3.8 fall
 ## Privacy and Source Notes
 
 - Raw RSS feeds are processed in memory and are not stored.
-- The dashboard displays public RSS metadata and links to source articles.
+- The dashboard displays public Google News RSS metadata and links to source articles.
 - Optional Gemini reports send selected RSS metadata and snippets to the Gemini REST API.
 - Verify important claims using the linked publisher and relevant primary sources.
+
+## Credits
+
+- UI reference: [BMW M DESIGN.md on GetDesign.md](https://getdesign.md/bmw-m), maintained by the VoltAgent team.
+- News discovery: [Google News](https://news.google.com/) public RSS search feeds.
+- Project-flow graphic: generated specifically for this repository using the same visual direction.
 
 ## License
 
