@@ -18,7 +18,7 @@ from news_agent import (
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Terminal-based daily AI and defence business news agent powered by Gemini."
+        description="Daily AI-platform news dashboard and Gemini-powered intelligence brief."
     )
     subparsers = parser.add_subparsers(dest="command")
 

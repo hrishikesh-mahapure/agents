@@ -117,15 +117,16 @@ class AgentConfig:
 
 
 TOPIC_QUERIES: Dict[str, List[str]] = {
-    "AI Business": [
-        "artificial intelligence business OR AI startup funding OR AI acquisition",
-        "generative AI enterprise earnings investment chip business",
-        "AI regulation company market business deal",
+    "AI Platforms": [
+        "(OpenAI OR ChatGPT OR Anthropic OR Claude) (launch OR model OR research OR API)",
+        "(Google Gemini OR DeepMind OR Microsoft Copilot) (launch OR model OR research OR API)",
+        "(Meta AI OR Llama OR xAI OR Grok) (launch OR model OR research OR API)",
+        "(Mistral OR Cohere OR Perplexity) AI (launch OR model OR research OR API)",
     ],
-    "Defence Business": [
-        "defence business contract procurement company OR defense business contract procurement company",
-        "military technology startup funding acquisition contract",
-        "aerospace defense industry order earnings deal",
+    "AI Industry": [
+        "AI agents developer tools coding models enterprise AI latest",
+        "AI chips datacenter Nvidia AMD funding acquisition regulation latest",
+        "generative AI startup funding partnership product launch latest",
     ],
 }
 
@@ -257,28 +258,28 @@ You are a careful business-news intelligence analyst. Create a concise daily rep
 using ONLY the supplied RSS article metadata and snippets. Do not invent facts. When a snippet does not
 support a conclusion, say that details are limited. Preserve the supplied URLs so the reader can verify each item.
 
-Audience: a business reader interested in artificial intelligence and the defence/defense industry.
+Audience: a reader who wants high-signal updates from leading AI platforms and the wider AI industry.
 
 Required Markdown structure:
-# Daily AI & Defence Business Brief — {report_date}
+# Daily AI Platform Brief — {report_date}
 
 ## Executive Summary
-- 5 to 8 bullets covering the most consequential developments across both sectors.
+- 5 to 8 bullets covering the most consequential platform, research, product, and business developments.
 
-## AI Business News
-For the most important AI-business stories, provide:
+## Leading Platform News
+For the most important AI-platform stories, provide:
 ### Headline
 - **What happened:** 1-2 factual sentences.
 - **Business significance:** 1-2 sentences focused on companies, capital, revenue, competition, regulation, supply chains, or market impact.
 - **Watch next:** one concrete issue to monitor.
 - **Source:** [Publisher](URL) — published time if available.
 
-## Defence Business News
-Use the same format. Focus on contracts, procurement, company strategy, funding, manufacturing capacity,
-exports, acquisitions, aerospace/space defence, dual-use technology, and regulation.
+## AI Industry News
+Use the same format. Focus on developer tools, chips, infrastructure, startups, funding, partnerships,
+acquisitions, enterprise adoption, safety, and regulation.
 
-## Cross-Sector Signals
-- 3 to 5 bullets on links between AI and defence business, clearly labeling any inference as "Inference".
+## Competitive Signals
+- 3 to 5 bullets on links and competitive shifts across platforms, clearly labeling any inference as "Inference".
 
 ## Companies & Organizations Mentioned
 A compact comma-separated list with no duplicates.
@@ -288,7 +289,6 @@ State that this report is based on RSS headlines/snippets and readers should ope
 
 Rules:
 - Select quality over quantity; omit weak, repetitive, purely political, or unrelated stories.
-- Do not provide operational military guidance, sensitive targeting information, or speculation about classified activity.
 - Never fabricate financial figures, contract values, quotations, dates, or company names.
 - Keep the report under approximately 1,800 words.
 

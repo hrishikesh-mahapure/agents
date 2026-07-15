@@ -1,301 +1,254 @@
-# AI & Defence Business News Agent
-
-![AI & Defence Business News Agent](assets/ai-defence-news-agent-banner.png)
+# AI GRID — AI Platform News Dashboard
 
 <p align="center">
-  <img alt="Python" src="https://img.shields.io/badge/Python-3.8%2B-3776AB?style=for-the-badge&logo=python&logoColor=white">
-  <img alt="Gemini" src="https://img.shields.io/badge/Gemini-REST_API-4285F4?style=for-the-badge&logo=google&logoColor=white">
+  <img alt="Python 3.8+" src="https://img.shields.io/badge/Python-3.8%2B-3776AB?style=for-the-badge&logo=python&logoColor=white">
   <img alt="Google News RSS" src="https://img.shields.io/badge/Google_News-RSS-34A853?style=for-the-badge&logo=rss&logoColor=white">
-  <img alt="Markdown" src="https://img.shields.io/badge/Output-Markdown-000000?style=for-the-badge&logo=markdown&logoColor=white">
+  <img alt="No dependencies" src="https://img.shields.io/badge/Dependencies-None-111111?style=for-the-badge">
+  <img alt="Gemini optional" src="https://img.shields.io/badge/Gemini-Optional-4285F4?style=for-the-badge&logo=google&logoColor=white">
 </p>
 
-> A terminal-based news intelligence agent that collects fresh AI and defence business headlines, filters the noise, asks Gemini to write a concise business brief, and saves the final report as Markdown.
+AI GRID is a responsive news-intelligence dashboard for tracking releases, research, developer tools, funding, regulation, and market moves across leading AI platforms.
 
-## What This Project Does
+It uses public Google News RSS results, does not scrape full articles, and runs entirely with the Python standard library. A Gemini-powered Markdown briefing workflow is also available as an optional CLI feature.
 
-This project is a small automation tool for people who want a quick daily briefing on:
+![AI GRID project flow](assets/ai-grid-project-flow.png)
 
-- AI business news: startups, funding, regulation, enterprise AI, chips, acquisitions, market moves
-- Defence business news: contracts, procurement, aerospace, defence tech, manufacturing, funding, exports
+## Project Highlights
 
-Instead of manually checking news sites, the agent pulls recent results from Google News RSS, converts the XML feed into Python article objects, removes repeated stories, sends the selected article metadata to Gemini, and stores a readable report in the `reports/` folder.
+- **UI design direction:** The dashboard was built using the [BMW M `DESIGN.md` analysis from GetDesign.md](https://getdesign.md/bmw-m) as its visual reference. The near-black canvas, precise typography, square components, engineering-grid details, and restrained light-blue/dark-blue/red accents were adapted for an AI news product.
+- **News source:** Current stories are discovered through public [Google News](https://news.google.com/) RSS search feeds. AI GRID parses RSS metadata and sends readers to the original publisher for the full story.
+- **Implementation:** Python 3.8+, the Python standard library, and vanilla HTML, CSS, and JavaScript—without third-party runtime packages.
 
-## Why It Is Useful
+The BMW M design reference is an independent design-system analysis published by GetDesign.md and maintained by the VoltAgent team. AI GRID is an independent project and is not affiliated with, endorsed by, or sponsored by BMW, GetDesign.md, VoltAgent, Google, or the publishers shown in the feed. BMW and Google are trademarks of their respective owners.
 
-- Saves time by collecting news from multiple Google News searches
-- Keeps the focus on business impact, not random headlines
-- Uses RSS metadata and snippets instead of scraping full articles
-- Produces clean Markdown reports that are easy to read, share, or archive
-- Runs once on demand or daily from the terminal
-- Uses only the Python standard library, with no Gemini SDK required
+## Features
 
-## Tech Stack
+- Live, UI-based AI news dashboard
+- Coverage of OpenAI, Anthropic, Google, Microsoft, Meta, xAI, Mistral, Cohere, Perplexity, and the wider AI industry
+- Platform filters, source names, timestamps, summaries, and original article links
+- Manual feed refresh without reloading the page
+- Responsive BMW-M-inspired dark interface
+- Automatic headline deduplication and age filtering
+- Automatic fallback when port `8000` is occupied
+- Optional Gemini-generated Markdown intelligence reports
+- No third-party Python packages
 
-| Area | Used In This Project |
-|---|---|
-| Language | Python 3.8+ |
-| News Source | Google News RSS |
-| Feed Format | XML / RSS |
-| XML Parser | `xml.etree.ElementTree` |
-| HTTP Client | `urllib.request` |
-| AI Model API | Gemini REST API |
-| Config | `.env` file loaded by local parser |
-| Output Format | Markdown |
-| Scheduling | Built-in Python loop with `time.sleep()` |
-| Dependencies | Python standard library only |
+## Quick Start
 
-## How It Works
+### 1. Clone the repository
 
-```text
-Terminal command
-      |
-      v
-main.py
-      |
-      v
-AgentConfig loads .env values
-      |
-      v
-AINewsAgent.collect_articles()
-      |
-      v
-Google News RSS search URLs
-      |
-      v
-RSS XML arrives as bytes
-      |
-      v
-XML is parsed into article fields
-      |
-      v
-Article objects are cleaned, filtered, sorted, and deduplicated
-      |
-      v
-Gemini prompt is built from article metadata
-      |
-      v
-Gemini creates the business brief
-      |
-      v
-Markdown report is saved in reports/
+```bash
+git clone <your-repository-url>
+cd ai_news_agent
 ```
 
-## Google News RSS Pipeline
+### 2. Start the dashboard
 
-The agent does not scrape full news websites. It uses Google News RSS search feeds.
+```bash
+python3 web_app.py
+```
 
-For every topic query, the project builds a URL like this:
+Open the URL printed in the terminal, normally:
+
+```text
+http://127.0.0.1:8000
+```
+
+The dashboard does not require a Gemini API key.
+
+If port `8000` is occupied, AI GRID automatically tries ports `8001` through `8009` and prints the selected URL. You can also choose a port explicitly:
+
+```bash
+python3 web_app.py --port 9000
+```
+
+To make the dashboard available to other devices on your local network:
+
+```bash
+python3 web_app.py --host 0.0.0.0 --port 8000
+```
+
+## How News Is Fetched
+
+Google News RSS is the discovery and aggregation layer; it is not treated as the original publisher of every story. The browser requests `GET /api/news` from the local Python server. The server then:
+
+1. Builds Google News RSS search URLs for leading AI platforms and industry topics.
+2. Downloads the public RSS/XML feeds using `urllib.request`.
+3. Parses headlines, publisher names, links, dates, and snippets.
+4. Excludes stories older than `LOOKBACK_HOURS`.
+5. Deduplicates similar headlines and sorts them newest-first.
+6. Limits the results using `MAX_ARTICLES_PER_TOPIC`.
+7. Returns JSON to the browser, where the cards and filters are rendered.
+
+Example RSS URL:
 
 ```text
 https://news.google.com/rss/search?q=<search-query>&hl=en-IN&gl=IN&ceid=IN:en
 ```
 
-Then the raw XML comes back from Google News:
+AI GRID links readers to the original result for full context. It does not scrape or republish full news articles.
 
-```xml
-<rss>
-  <channel>
-    <item>
-      <title>Example headline</title>
-      <link>https://example.com/story</link>
-      <source>Publisher</source>
-      <pubDate>Mon, 13 Jul 2026 08:30:00 GMT</pubDate>
-      <description>Short RSS snippet...</description>
-    </item>
-  </channel>
-</rss>
+### Project Flow
+
+```text
+Google News RSS
+       ↓
+Python collector and XML parser
+       ↓
+Age filtering, sorting, and headline deduplication
+       ↓
+Local JSON endpoint: /api/news
+       ↓
+Responsive HTML/CSS/JavaScript dashboard
+
+Optional: selected RSS metadata → Gemini → Markdown briefing
 ```
 
-The project converts each `<item>` into an `Article` object:
+## Coverage
 
-```python
-Article(
-    topic="AI Business",
-    title="Example headline",
-    source="Publisher",
-    link="https://example.com/story",
-    published=datetime(...),
-    snippet="Short RSS snippet..."
-)
-```
+The current searches are grouped into two feeds:
 
-Those articles are then filtered by age, deduplicated by title, sorted newest-first, and passed to Gemini.
+| Feed | Coverage |
+|---|---|
+| AI Platforms | OpenAI/ChatGPT, Anthropic/Claude, Google Gemini/DeepMind, Microsoft Copilot, Meta/Llama, xAI/Grok, Mistral, Cohere, and Perplexity |
+| AI Industry | Agents, developer tools, coding models, chips, data centers, funding, acquisitions, partnerships, enterprise AI, safety, and regulation |
+
+Search queries can be changed in `TOPIC_QUERIES` inside `news_agent.py`.
 
 ## Project Structure
 
 ```text
 ai_news_agent/
-  assets/
-    ai-defence-news-agent-banner.png
-  reports/
-    ai_defence_business_YYYY-MM-DD_HHMMSS.md
-  main.py
-  news_agent.py
-  requirements.txt
-  run_daily.sh
-  run_daily.bat
-  .env.example
-  .gitignore
-  README.md
+├── web/
+│   ├── index.html          # Dashboard markup
+│   ├── styles.css          # Responsive BMW-M-inspired styling
+│   └── app.js              # Feed loading, filtering, and rendering
+├── assets/                 # Repository assets
+├── main.py                 # Optional report CLI and scheduler
+├── news_agent.py           # RSS collection and Gemini report logic
+├── web_app.py              # Static web server and JSON API
+├── run_daily.sh            # Linux/macOS scheduler launcher
+├── run_daily.bat           # Windows scheduler launcher
+├── requirements.txt        # No external dependencies
+├── .env.example            # Configuration template
+├── LICENSE
+└── README.md
 ```
 
-## Key Files
+## Web API
 
-| File | Purpose |
+| Endpoint | Purpose |
 |---|---|
-| `main.py` | Command-line interface for `run`, `schedule`, and `check` |
-| `news_agent.py` | Core logic for RSS fetching, XML parsing, Gemini prompting, and report saving |
-| `.env.example` | Template for local configuration |
-| `requirements.txt` | Notes that no third-party packages are required |
-| `run_daily.sh` | Linux/macOS launcher for daily mode |
-| `run_daily.bat` | Windows launcher for daily mode |
-| `reports/` | Generated Markdown reports |
+| `GET /` | Serves the dashboard |
+| `GET /api/news` | Fetches, processes, and returns current news as JSON |
+| `GET /api/health` | Returns a basic server health response |
 
-## Requirements
+## Configuration
 
-- Python 3.8 or newer
-- Internet access
-- Gemini API key from Google AI Studio
-
-## Setup
-
-Clone or open this folder, then create a virtual environment.
-
-### Linux / macOS
+The dashboard works with defaults. To customize it, copy the example environment file:
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
+cp .env.example .env
 ```
 
-### Windows
+| Variable | Default | Purpose |
+|---|---:|---|
+| `LOOKBACK_HOURS` | `36` | Maximum age of stories included in the feed |
+| `MAX_ARTICLES_PER_TOPIC` | `12` | Maximum stories selected for each feed group |
+| `TIMEZONE` | `Asia/Kolkata` | Timezone used by reports and scheduling |
+| `GEMINI_API_KEY` | empty | Required only for generated Markdown reports |
+| `GEMINI_MODEL` | `gemini-2.5-flash` | Gemini model used for reports |
+| `DAILY_RUN_TIME` | `08:00` | Scheduled report time in `HH:MM` format |
+| `REPORTS_DIR` | `reports` | Generated report directory |
+| `LOG_LEVEL` | `INFO` | Application logging level |
 
-```powershell
-python -m venv .venv
-.venv\Scripts\activate
-python -m pip install -r requirements.txt
-```
+Never commit your real `.env` file or API key.
 
-`requirements.txt` contains no third-party packages, so installation should finish immediately.
+## Optional Gemini Reports
 
-## Environment Variables
+The UI does not use Gemini. Gemini is only needed when generating summarized Markdown briefs from the command line.
 
-Create a `.env` file from `.env.example` and add your Gemini API key.
+Add a key to `.env`:
 
 ```env
-GEMINI_API_KEY=paste_your_gemini_api_key_here
-GEMINI_MODEL=gemini-2.5-flash
-TIMEZONE=Asia/Kolkata
-DAILY_RUN_TIME=08:00
-LOOKBACK_HOURS=36
-MAX_ARTICLES_PER_TOPIC=12
-REPORTS_DIR=reports
-LOG_LEVEL=INFO
+GEMINI_API_KEY=your_api_key_here
 ```
 
-Do not commit or share your `.env` file.
-
-## Commands
-
-### Check Configuration
+Validate configuration:
 
 ```bash
 python3 main.py check
 ```
 
-This validates the setup without calling Gemini.
-
-### Generate One Report
+Generate one report:
 
 ```bash
 python3 main.py run
 ```
 
-Optional overrides:
+Change the collection window or result limit:
 
 ```bash
 python3 main.py run --hours 48 --max-per-topic 15
 ```
 
-### Run Daily Scheduler
+Run the daily scheduler:
 
 ```bash
 python3 main.py schedule --run-now
 ```
 
-Run at a custom time for the current session:
+Use a custom daily time:
 
 ```bash
 python3 main.py schedule --time 07:30 --run-now
 ```
 
-The scheduler keeps the terminal open and runs every day at the configured time. Press `Ctrl+C` to stop it.
-
-## Output Example
-
-Reports are saved as timestamped Markdown files:
-
-```text
-reports/ai_defence_business_2026-07-13_163741.md
-```
-
-Each report follows this structure:
-
-```text
-# Daily AI & Defence Business Brief
-
-## Executive Summary
-## AI Business News
-## Defence Business News
-## Cross-Sector Signals
-## Companies & Organizations Mentioned
-## Source Notes
-```
-
-## Configuration Reference
-
-| Variable | Default | Purpose |
-|---|---:|---|
-| `GEMINI_API_KEY` | required | Gemini API key |
-| `GEMINI_MODEL` | `gemini-2.5-flash` | Gemini model used for report generation |
-| `TIMEZONE` | `Asia/Kolkata` | Timezone used by the scheduler and filenames |
-| `DAILY_RUN_TIME` | `08:00` | Daily run time in `HH:MM` format |
-| `LOOKBACK_HOURS` | `36` | Maximum age of stories to include |
-| `MAX_ARTICLES_PER_TOPIC` | `12` | Number of stories sent to Gemini per topic |
-| `REPORTS_DIR` | `reports` | Output folder for Markdown reports |
-| `LOG_LEVEL` | `INFO` | Logging detail |
-
-## Design Notes
-
-- RSS data is kept in memory and is not stored as raw XML files.
-- Only the final Gemini-written Markdown report is saved.
-- The Gemini API key is sent in the `x-goog-api-key` HTTPS header.
-- The generated brief is based on RSS headlines, links, publishers, dates, and snippets.
-- Important business decisions should still be verified from original publisher links and primary documents.
-
 ## Troubleshooting
 
-### Configuration error about Gemini API key
+### Port already in use
 
-Update `.env` and set:
-
-```env
-GEMINI_API_KEY=your_real_key_here
-```
-
-### No articles found
-
-Try increasing the lookback window:
+The server normally selects the next available port automatically. To force another port:
 
 ```bash
-python3 main.py run --hours 72
+python3 web_app.py --port 9000
 ```
+
+To inspect or stop a Linux process using port `8000`:
+
+```bash
+sudo lsof -i :8000
+sudo fuser -k 8000/tcp
+```
+
+### Feed is empty or unavailable
+
+- Confirm that the computer has internet access.
+- Click **Refresh feed** in the dashboard.
+- Increase `LOOKBACK_HOURS` in `.env`.
+- Check whether Google News RSS is reachable on the current network.
+
+### Gemini API key error
+
+This only affects CLI report generation. Add a valid `GEMINI_API_KEY` to `.env`; the web dashboard works without it.
 
 ### Python timezone issue
 
-Python 3.9+ supports IANA timezone names through `zoneinfo`. Python 3.8 fallback support is limited to `Asia/Kolkata` and `UTC`.
+Python 3.9+ supports IANA timezone names through `zoneinfo`. The Python 3.8 fallback is limited to `Asia/Kolkata` and `UTC`.
+
+## Privacy and Source Notes
+
+- Raw RSS feeds are processed in memory and are not stored.
+- The dashboard displays public Google News RSS metadata and links to source articles.
+- Optional Gemini reports send selected RSS metadata and snippets to the Gemini REST API.
+- Verify important claims using the linked publisher and relevant primary sources.
+
+## Credits
+
+- UI reference: [BMW M DESIGN.md on GetDesign.md](https://getdesign.md/bmw-m), maintained by the VoltAgent team.
+- News discovery: [Google News](https://news.google.com/) public RSS search feeds.
+- Project-flow graphic: generated specifically for this repository using the same visual direction.
 
 ## License
 
-This project is released under the license included in [LICENSE](LICENSE).
+Released under the terms in [LICENSE](LICENSE).
