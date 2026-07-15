@@ -40,3 +40,6 @@ Thumbs.db
 # Local Codex/agent metadata
 .codex/
 .agents/
+
+# Local chat state
+chat_history.json
