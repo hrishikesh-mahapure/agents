@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="The latest releases, research and moves from leading AI platforms.">
+  <title>AI GRID — Platform Intelligence</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="AI Grid home"><span>AI</span>GRID</a>
+    <nav aria-label="Main navigation">
+      <a href="#latest">Latest</a><a href="#platforms">Platforms</a><a href="#signal">Signal</a>
+    </nav>
+    <button class="refresh top-refresh" type="button">Refresh feed <span>↗</span></button>
+  </header>
+  <main id="top">
+    <section class="hero">
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="eyebrow"><i></i> Live platform intelligence</div>
+      <h1>AI MOVES.<br><span>YOU MOVE FIRST.</span></h1>
+      <div class="hero-bottom">
+        <p>One high-signal feed for releases, research and market moves across the world’s leading AI platforms.</p>
+        <div class="metric"><strong id="story-count">—</strong><span>signals tracked</span></div>
+        <div class="metric"><strong id="source-count">—</strong><span>sources today</span></div>
+      </div>
+    </section>
+    <div class="m-stripe"><i></i><i></i><i></i></div>
+
+    <section class="feed-section" id="latest">
+      <div class="section-head">
+        <div><span class="index">01</span><h2>THE LATEST</h2></div>
+        <p id="update-label">Connecting to live feed…</p>
+      </div>
+      <div class="filters" id="platforms" role="group" aria-label="Filter news">
+        <button class="active" data-filter="All">All signal</button>
+        <button data-filter="OpenAI">OpenAI</button><button data-filter="Anthropic">Anthropic</button>
+        <button data-filter="Google">Google</button><button data-filter="Microsoft">Microsoft</button>
+        <button data-filter="Meta">Meta</button><button data-filter="Other">More platforms</button>
+      </div>
+      <div id="lead-story" class="lead-story skeleton"></div>
+      <div id="news-grid" class="news-grid" aria-live="polite"></div>
+      <div id="empty-state" class="empty" hidden>No stories match this filter.</div>
+    </section>
+
+    <section class="signal-band" id="signal">
+      <span class="index">02</span>
+      <div><p>BUILT FOR DECISION VELOCITY</p><h2>LESS NOISE.<br>MORE SIGNAL.</h2></div>
+      <button class="refresh" type="button">Update intelligence <span>↗</span></button>
+    </section>
+  </main>
+  <footer><a class="brand" href="#top"><span>AI</span>GRID</a><p>Leading AI platforms. One live brief.</p><p>Powered by public news feeds.</p></footer>
+  <script src="/app.js"></script>
+</body>
+</html>

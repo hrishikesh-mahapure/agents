@@ -1,0 +1,2 @@
+# No third-party Python packages are required.
+# The agent uses Python's standard library and Gemini's HTTPS REST API.
